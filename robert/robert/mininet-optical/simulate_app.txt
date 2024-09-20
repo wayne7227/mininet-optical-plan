@@ -1,0 +1,24 @@
+    def run_simulate(length=100, roadm_insertion_loss=17, numAmp=1, boost_target_gain=1, ber=1):
+    roadm_insertion_loss_db = roadm_insertion_loss * dB
+    maxD = 0.1  # max = maxD amps/km
+    minB = roadm_insertion_loss - 5
+    maxB = roadm_insertion_loss + 5
+    maxA = int(length * maxD)
+    if maxA <= 10: 
+        maxA = 10
+
+    output_file="result2.txt"
+    with open(output_file, "w") as fo:
+        for boost_target_gain in range(minB, maxB + 1):
+            for numAmp in range(1, maxA + 1):
+                t2_gosnr = calc(length=length, roadm_insertion_loss=roadm_insertion_loss_db,
+                                numAmp=numAmp, boost_target_gain=boost_target_gain * dB, ch=1)[4]
+                t2_ber = get_ber(t2_gosnr)
+                if t2_ber > ber:
+                    continue
+                t1_gosnr = calc(length=length, roadm_insertion_loss=roadm_insertion_loss_db,
+                                numAmp=numAmp, boost_target_gain=boost_target_gain * dB, ch=2)[4]
+                t1_ber = get_ber(t1_gosnr)
+                if t2_ber > ber:
+                    continue
+                fo.write("%d %d %.4f %.4f %.4f %.4f\n" % (boost_target_gain, numAmp, t1_gosnr, t2_gosnr, t1_ber, t2_ber))

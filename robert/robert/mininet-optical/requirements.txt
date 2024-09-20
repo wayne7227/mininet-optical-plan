@@ -1,0 +1,10 @@
+numpy
+scipy
+bottle
+lxml
+xmltodict
+netconf
+ncclient
+sphinx
+sphinx-autoapi
+myst-parser
